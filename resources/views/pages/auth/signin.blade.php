@@ -24,7 +24,49 @@
                                 Enter your email and password to sign in!
                             </p>
                         </div>
-                        <div>
+                        <div x-data="authForm()">
+                            <script>
+                                function authForm() {
+                                    return {
+                                        formData: {
+                                            email: '',
+                                            password: '',
+                                        },
+                                        loading: false,
+                                        errorMessage: '',
+                                        
+                                        async submit() {
+                                            this.loading = true;
+                                            this.errorMessage = '';
+                                            
+                                            try {
+                                                const response = await fetch('/api/login', {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'Accept': 'application/json'
+                                                    },
+                                                    body: JSON.stringify(this.formData)
+                                                });
+                                                
+                                                const data = await response.json();
+                                                
+                                                if (data.success) {
+                                                    localStorage.setItem('auth_token', data.token);
+                                                    localStorage.setItem('user_roles', JSON.stringify(data.roles));
+                                                    window.location.href = '/';
+                                                } else {
+                                                    this.errorMessage = data.message || 'Login failed.';
+                                                }
+                                            } catch (error) {
+                                                this.errorMessage = 'We could not connect to the server.';
+                                            } finally {
+                                                this.loading = false;
+                                            }
+                                        }
+                                    }
+                                }
+                            </script>
                             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
                                 <button
                                     class="inline-flex items-center justify-center gap-3 rounded-lg bg-gray-100 px-7 py-3 text-sm font-normal text-gray-700 transition-colors hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
@@ -64,14 +106,17 @@
                                     <span class="bg-white p-2 text-gray-400 sm:px-5 sm:py-2 dark:bg-gray-900">Or</span>
                                 </div>
                             </div>
-                            <form>
+                            <form @submit.prevent="submit">
+                                <template x-if="errorMessage">
+                                    <div class="mb-5 rounded-lg bg-error-50 p-4 text-sm text-error-800 dark:bg-error-900/30 dark:text-error-400" x-text="errorMessage"></div>
+                                </template>
                                 <div class="space-y-5">
                                     <!-- Email -->
                                     <div>
                                         <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
                                             Email<span class="text-error-500">*</span>
                                         </label>
-                                        <input type="email" id="email" name="email" placeholder="info@gmail.com"
+                                        <input type="email" id="email" x-model="formData.email" placeholder="info@gmail.com"
                                             class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30" />
                                     </div>
                                     <!-- Password -->
@@ -81,6 +126,7 @@
                                         </label>
                                         <div x-data="{ showPassword: false }" class="relative">
                                             <input :type="showPassword ? 'text' : 'password'"
+                                                x-model="formData.password"
                                                 placeholder="Enter your password"
                                                 class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pr-11 pl-4 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30" />
                                             <span @click="showPassword = !showPassword"
@@ -122,9 +168,10 @@
                                     </div>
                                     <!-- Button -->
                                     <div>
-                                        <button
-                                            class="bg-brand-500 shadow-theme-xs hover:bg-brand-600 flex w-full items-center justify-center rounded-lg px-4 py-3 text-sm font-medium text-white transition">
-                                            Sign In
+                                        <button type="submit" :disabled="loading"
+                                            class="bg-brand-500 shadow-theme-xs hover:bg-brand-600 flex w-full items-center justify-center rounded-lg px-4 py-3 text-sm font-medium text-white transition disabled:opacity-50">
+                                            <span x-show="!loading">Sign In</span>
+                                            <span x-show="loading">Signing in...</span>
                                         </button>
                                     </div>
                                 </div>
