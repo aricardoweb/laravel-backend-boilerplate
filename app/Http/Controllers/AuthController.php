@@ -34,4 +34,22 @@ class AuthController extends Controller
             'message' => 'As credenciais fornecidas estão incorretas.'
         ], 401);
     }
+
+    public function logout(Request $request)
+    {
+        // Delete Sanctum tokens
+        if ($request->user()) {
+            $request->user()->tokens()->delete();
+        }
+
+        // Invalidate session
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Logout successful'
+        ]);
+    }
 }

@@ -6,9 +6,10 @@ use App\Http\Controllers\DashboardController;
 // dashboard pages
 Route::middleware('auth')->group(function () {
     Route::get('/', function () {
-        return view('pages.dashboard.ecommerce', ['title' => 'E-commerce Dashboard']);
+        return view('pages.dashboard.welcome', ['title' => 'Dashboard']);
     })->name('dashboard');
 
+    /* Ocultando rotas de template conforme solicitação do usuário
     Route::get('/calendar', function () {
         return view('pages.calender', ['title' => 'Calendar']);
     })->name('calendar');
@@ -60,6 +61,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/videos', function () {
         return view('pages.ui-elements.videos', ['title' => 'Videos']);
     })->name('videos');
+    */
 });
 
 // authentication pages
@@ -102,3 +104,6 @@ Route::get('/error-404', function () {
 
 // authentication API (in web group for session support)
 Route::post('/api/login', [App\Http\Controllers\AuthController::class, 'login']);
+
+// logout API (in web group for session support)
+Route::post('/api/logout', [App\Http\Controllers\AuthController::class, 'logout'])->middleware('auth');
