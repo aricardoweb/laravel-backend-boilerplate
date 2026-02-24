@@ -145,7 +145,7 @@
                     </div>
 
                     <!-- Modal da Galeria (AlpineJS) -->
-                    <div x-show="isGalleryOpen" style="display: none;" class="fixed inset-0 z-[100] flex items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4 sm:p-6"
+                    <div x-show="isGalleryOpen" style="display: none;" class="fixed inset-0 z-[999999] flex items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4 sm:p-6"
                         x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
                         x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
                         
@@ -162,9 +162,44 @@
                                 </button>
                             </div>
 
+                            <!-- Área de Upload Rápido -->
+                            <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
+                                <div 
+                                    class="relative border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-6 text-center transition-all"
+                                    :class="{'border-brand-500 bg-brand-50/50 dark:bg-brand-900/10': isDragging}"
+                                    @dragover.prevent="isDragging = true"
+                                    @dragleave.prevent="isDragging = false"
+                                    @drop.prevent="isDragging = false; handleDrop($event)"
+                                >
+                                    <input type="file" x-ref="fileInput" class="hidden" accept="image/jpeg,image/png,image/jpg,image/gif,image/svg+xml" @change="handleFileSelect($event)">
+                                    
+                                    <div x-show="!isUploading">
+                                        <svg class="mx-auto h-8 w-8 text-gray-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                        </svg>
+                                        <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            Arraste uma imagem aqui ou 
+                                            <button type="button" @click="$refs.fileInput.click()" class="text-brand-500 hover:text-brand-600 font-semibold focus:outline-none">clique para enviar</button>
+                                        </p>
+                                        <p class="text-xs text-gray-500 mt-1">PNG, JPG, SVG ou GIF (Max. 5MB)</p>
+                                    </div>
+
+                                    <div x-show="isUploading" style="display: none;" class="flex flex-col items-center">
+                                        <svg class="animate-spin -ml-1 mr-3 h-8 w-8 text-brand-500 mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        <p class="text-sm font-medium text-brand-600 dark:text-brand-400">Enviando imagem...</p>
+                                    </div>
+                                </div>
+                                <template x-if="uploadError">
+                                    <p class="text-red-500 text-sm mt-3 text-center" x-text="uploadError"></p>
+                                </template>
+                            </div>
+
                             <!-- Grade de Imagens -->
                             <div class="flex-1 overflow-y-auto p-6 bg-gray-50/50 dark:bg-black/20 custom-scrollbar">
-                                <template x-if="images.length === 0">
+                                <template x-if="images.length === 0 && !isUploading">
                                     <div class="py-12 text-center text-gray-500">
                                         Não há imagens na galeria. Faça o upload primeiro na aba Galeria.
                                     </div>
@@ -206,19 +241,22 @@
             auth_banner: initialData.auth_banner || '',
             
             isGalleryOpen: false,
-            currentActivatingField: null, // Pode ser 'app_logo', 'app_favicon', ou 'auth_banner'
+            currentActivatingField: null,
+            isDragging: false,
+            isUploading: false,
+            uploadError: null,
 
             openGallery(field) {
                 this.currentActivatingField = field;
                 this.isGalleryOpen = true;
-                // Impede rolagem do body
+                this.uploadError = null;
                 document.body.style.overflow = 'hidden';
             },
 
             closeGallery() {
                 this.isGalleryOpen = false;
                 this.currentActivatingField = null;
-                // Restaura rolagem do body
+                this.uploadError = null;
                 document.body.style.overflow = '';
             },
 
@@ -232,6 +270,66 @@
             isActive(url) {
                 if (!this.currentActivatingField) return false;
                 return this[this.currentActivatingField] === url;
+            },
+
+            async handleDrop(event) {
+                const files = event.dataTransfer.files;
+                if (files.length > 0) {
+                    await this.uploadFile(files[0]);
+                }
+            },
+
+            async handleFileSelect(event) {
+                const files = event.target.files;
+                if (files.length > 0) {
+                    await this.uploadFile(files[0]);
+                }
+                // Reset input
+                event.target.value = '';
+            },
+
+            async uploadFile(file) {
+                this.isUploading = true;
+                this.uploadError = null;
+
+                const formData = new FormData();
+                formData.append('image', file);
+                
+                // Pega o token CSRF da meta tag do layout principal
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                try {
+                    const response = await fetch('{{ route('gallery.store') }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json' // Força retorno JSON em caso de erro de validação
+                        },
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        
+                        // Push new image object to images array
+                        if(data.image) {
+                            // Insert at the beginning of the array so it shows up first
+                            this.images.unshift(data.image);
+                            // Auto-select the newly uploaded image
+                            this.selectImage(data.image.url);
+                        } else {
+                            // Se a resposta não contém uma imagem por algum motivo, recarrega a página de forma contida
+                            window.location.reload(); 
+                        }
+                    } else {
+                        const data = await response.json();
+                        this.uploadError = data.message || 'Erro ao enviar a imagem. Verifique se o formato e tamanho (máx 5MB) são válidos.';
+                    }
+                } catch (error) {
+                    this.uploadError = 'Erro na conexão. Tente novamente.';
+                } finally {
+                    this.isUploading = false;
+                }
             }
         }));
     });

@@ -32,14 +32,25 @@ class GalleryController extends Controller
             // Store the file in the public disk under 'gallery' directory
             $path = $file->storeAs('gallery', $filename, 'public');
 
-            Image::create([
+            $image = Image::create([
                 'filename' => $filename,
                 'path' => $path,
                 // Generate URL that works regardless of APP_URL configuration
                 'url' => Storage::url($path),
             ]);
 
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Imagem enviada com sucesso.',
+                    'image' => $image
+                ], 201);
+            }
+
             return redirect()->route('gallery.index')->with('success', 'Imagem enviada com sucesso para a galeria.');
+        }
+
+        if ($request->wantsJson()) {
+            return response()->json(['message' => 'Ocorreu um erro ao enviar a imagem.'], 400);
         }
 
         return back()->with('error', 'Ocorreu um erro ao enviar a imagem.');
