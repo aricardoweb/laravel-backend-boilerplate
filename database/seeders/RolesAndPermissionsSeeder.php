@@ -17,16 +17,20 @@ class RolesAndPermissionsSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Create Roles
-        $superAdmin = Role::create(['name' => 'Super Admin']);
-        $user = Role::create(['name' => 'User']);
+        $superAdmin = Role::firstOrCreate(['name' => 'Super Admin']);
+        $userRole = Role::firstOrCreate(['name' => 'User']);
 
         // Create Super Admin User
-        $admin = \App\Models\User::factory()->create([
-            'name' => 'Super Admin',
-            'email' => 'admin@medcare.com',
-            'password' => \Illuminate\Support\Facades\Hash::make('123456'),
-        ]);
+        $admin = \App\Models\User::firstOrCreate(
+            ['email' => 'admin@medcare.com'],
+            [
+                'name' => 'Super Admin',
+                'password' => \Illuminate\Support\Facades\Hash::make('123456'),
+            ]
+        );
 
-        $admin->assignRole($superAdmin);
+        if (!$admin->hasRole('Super Admin')) {
+            $admin->assignRole($superAdmin);
+        }
     }
 }

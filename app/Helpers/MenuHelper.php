@@ -6,13 +6,28 @@ class MenuHelper
 {
     public static function getMainNavItems()
     {
-        return [
+        $items = [
             [
                 'icon' => 'dashboard',
                 'name' => 'Dashboard',
                 'path' => '/',
             ],
+            [
+                'icon' => 'user',
+                'name' => 'Meu Perfil',
+                'path' => '/profile',
+            ],
         ];
+
+        if (auth()->check() && auth()->user()->hasRole('Super Admin')) {
+            $items[] = [
+                'icon' => 'group',
+                'name' => 'Usuários',
+                'path' => '/users',
+            ];
+        }
+
+        return $items;
     }
 
     public static function getOthersItems()

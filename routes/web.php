@@ -9,6 +9,20 @@ Route::middleware('auth')->group(function () {
         return view('pages.dashboard.welcome', ['title' => 'Dashboard']);
     })->name('dashboard');
 
+    // Perfil do usuário logado
+    Route::get('/profile', [App\Http\Controllers\UserController::class, 'profile'])->name('profile');
+    Route::put('/profile', [App\Http\Controllers\UserController::class, 'updateProfile'])->name('profile.update');
+
+    // Gerenciamento de usuários e roles (apenas Super Admin)
+    Route::middleware('role:Super Admin')->group(function () {
+        Route::get('/users', [App\Http\Controllers\UserController::class, 'index'])->name('users.index');
+        Route::get('/users/create', [App\Http\Controllers\UserController::class, 'create'])->name('users.create');
+        Route::post('/users', [App\Http\Controllers\UserController::class, 'store'])->name('users.store');
+        Route::get('/users/{user}/edit', [App\Http\Http\Controllers\UserController::class, 'edit'])->name('users.edit');
+        Route::put('/users/{user}', [App\Http\Controllers\UserController::class, 'update'])->name('users.update');
+        Route::delete('/users/{user}', [App\Http\Controllers\UserController::class, 'destroy'])->name('users.destroy');
+    });
+
     /* Ocultando rotas de template conforme solicitação do usuário
     Route::get('/calendar', function () {
         return view('pages.calender', ['title' => 'Calendar']);
