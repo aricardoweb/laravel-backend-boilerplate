@@ -18,9 +18,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/users', [App\Http\Controllers\UserController::class, 'index'])->name('users.index');
         Route::get('/users/create', [App\Http\Controllers\UserController::class, 'create'])->name('users.create');
         Route::post('/users', [App\Http\Controllers\UserController::class, 'store'])->name('users.store');
-        Route::get('/users/{user}/edit', [App\Http\Http\Controllers\UserController::class, 'edit'])->name('users.edit');
+        Route::get('/users/{user}/edit', [App\Http\Controllers\UserController::class, 'edit'])->name('users.edit');
         Route::put('/users/{user}', [App\Http\Controllers\UserController::class, 'update'])->name('users.update');
         Route::delete('/users/{user}', [App\Http\Controllers\UserController::class, 'destroy'])->name('users.destroy');
+
+        // Galeria de Imagens
+        Route::get('/gallery', [App\Http\Controllers\GalleryController::class, 'index'])->name('gallery.index');
+        Route::post('/gallery', [App\Http\Controllers\GalleryController::class, 'store'])->name('gallery.store');
+        Route::delete('/gallery/{image}', [App\Http\Controllers\GalleryController::class, 'destroy'])->name('gallery.destroy');
     });
 
     /* Ocultando rotas de template conforme solicitação do usuário

@@ -74,15 +74,19 @@
                                         </svg>
                                     </a>
                                     @if ($user->id !== auth()->id())
-                                        <form action="{{ route('users.destroy', $user) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir este usuário?');" class="inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-gray-500 hover:text-error-500 transition-colors">
+                                        <x-ui.confirm-modal
+                                            title="Excluir Usuário"
+                                            message="Tem certeza que deseja excluir o usuário {{ $user->name }}? Esta ação não pode ser desfeita."
+                                            confirmText="Sim, excluir"
+                                            action="{{ route('users.destroy', $user) }}"
+                                            overrideMethod="DELETE"
+                                        >
+                                            <button type="button" class="text-gray-500 outline-none hover:text-error-500 focus:text-error-500 transition-colors">
                                                 <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M15.8333 5.83333L15.1111 15.9444C15.0483 16.8242 14.3164 17.5 13.4346 17.5H6.5654C5.68361 17.5 4.95171 16.8242 4.88889 15.9444L4.16667 5.83333M8.33333 9.16667V14.1667M11.6667 9.16667V14.1667M13.3333 5.83333V4.16667C13.3333 3.24619 12.5871 2.5 11.6667 2.5H8.33333C7.41286 2.5 6.66667 3.24619 6.66667 4.16667V5.83333M3.33333 5.83333H16.6667" stroke="currentColor" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round" />
                                                 </svg>
                                             </button>
-                                        </form>
+                                        </x-ui.confirm-modal>
                                     @endif
                                 </div>
                             </td>
