@@ -21,6 +21,11 @@ class MenuHelper
 
         if (auth()->check() && auth()->user()->hasRole('Super Admin')) {
             $items[] = [
+                'icon' => 'ecommerce',
+                'name' => 'Planos',
+                'path' => '/plans',
+            ];
+            $items[] = [
                 'icon' => 'image',
                 'name' => 'Galeria',
                 'path' => '/gallery',

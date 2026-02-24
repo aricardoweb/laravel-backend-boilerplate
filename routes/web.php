@@ -30,6 +30,9 @@ Route::middleware('auth')->group(function () {
         // Configurações
         Route::get('/settings', [App\Http\Controllers\SettingController::class, 'index'])->name('settings.index');
         Route::put('/settings', [App\Http\Controllers\SettingController::class, 'update'])->name('settings.update');
+
+        // Planos
+        Route::resource('/plans', App\Http\Controllers\PlanController::class);
     });
 
     /* Ocultando rotas de template conforme solicitação do usuário
