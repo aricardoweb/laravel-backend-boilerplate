@@ -30,6 +30,11 @@ class MenuHelper
                 'name' => 'Usuários',
                 'path' => '/users',
             ];
+            $items[] = [
+                'icon' => 'ui-elements',
+                'name' => 'Configurações',
+                'path' => '/settings',
+            ];
         }
 
         return $items;

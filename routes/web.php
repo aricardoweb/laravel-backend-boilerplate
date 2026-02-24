@@ -26,6 +26,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/gallery', [App\Http\Controllers\GalleryController::class, 'index'])->name('gallery.index');
         Route::post('/gallery', [App\Http\Controllers\GalleryController::class, 'store'])->name('gallery.store');
         Route::delete('/gallery/{image}', [App\Http\Controllers\GalleryController::class, 'destroy'])->name('gallery.destroy');
+
+        // Configurações
+        Route::get('/settings', [App\Http\Controllers\SettingController::class, 'index'])->name('settings.index');
+        Route::put('/settings', [App\Http\Controllers\SettingController::class, 'update'])->name('settings.update');
     });
 
     /* Ocultando rotas de template conforme solicitação do usuário

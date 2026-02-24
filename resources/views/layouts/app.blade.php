@@ -6,7 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ $title ?? 'Dashboard' }} | TailAdmin - Laravel Tailwind CSS Admin Dashboard Template</title>
+    @php
+        $appName = app_setting('app_name', 'MedCare Backend');
+        $favicon = app_setting('app_favicon', null);
+    @endphp
+
+    <title>{{ !empty($title) ? $title . ' | ' . $appName : $appName }}</title>
+
+    @if($favicon)
+        <link rel="icon" type="image/png" href="{{ $favicon }}">
+    @endif
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])

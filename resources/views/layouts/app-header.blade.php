@@ -49,9 +49,16 @@
             </button>
 
             <!-- Logo (mobile only) -->
-            <a href="/" class="xl:hidden">
-                <img class="dark:hidden" src="/images/logo/logo.svg" alt="Logo" />
-                <img class="hidden dark:block" src="/images/logo/logo-dark.svg" alt="Logo" />
+            <a href="/" class="xl:hidden flex items-center justify-center h-8">
+                @php
+                    $appLogo = app_setting('app_logo');
+                @endphp
+                @if($appLogo)
+                    <img src="{{ $appLogo }}" alt="Logo" class="max-h-8 w-auto object-contain" />
+                @else
+                    <img class="dark:hidden" src="/images/logo/logo.svg" alt="Logo" />
+                    <img class="hidden dark:block" src="/images/logo/logo-dark.svg" alt="Logo" />
+                @endif
             </a>
 
             <!-- Application Menu Toggle (mobile only) -->
