@@ -13,8 +13,8 @@ Atualmente, o sistema possui duas roles principais:
 
 Durante o processo de instalação e seeding (`php artisan migrate:fresh --seed`), um usuário "Super Admin" é criado automaticamente para facilitar o primeiro acesso:
 
-- **Email**: `admin@medcare.com`
-- **Senha**: `123456`
+- **Email**: `admin@email.com`
+- **Senha**: `123123`
 
 > [!WARNING]
 > Certifique-se de alterar as credenciais de administrador em ambientes de produção.

@@ -22,10 +22,10 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // Create Super Admin User
         $admin = \App\Models\User::firstOrCreate(
-            ['email' => 'admin@medcare.com'],
+            ['email' => 'admin@email.com'],
             [
                 'name' => 'Super Admin',
-                'password' => \Illuminate\Support\Facades\Hash::make('123456'),
+                'password' => \Illuminate\Support\Facades\Hash::make('123123'),
             ]
         );
 
