@@ -17,6 +17,9 @@
         <link rel="icon" type="image/png" href="{{ $favicon }}">
     @endif
 
+    <!-- Page scripts that must register before Alpine.start() -->
+    @stack('alpine')
+
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -112,8 +115,7 @@
 
     </div>
 
+    @stack('scripts')
 </body>
-
-@stack('scripts')
 
 </html>

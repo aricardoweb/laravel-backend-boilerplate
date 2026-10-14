@@ -150,42 +150,53 @@
                         x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
                         
                         <div class="relative flex h-full max-h-[80vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl dark:bg-gray-900"
-                            @click.away="closeGallery()">
+                            @click.outside="canCloseGallery() && closeGallery()">
                             
                             <!-- Header do Modal -->
-                            <div class="flex items-center justify-between border-b border-gray-100 px-6 py-4 dark:border-gray-800">
-                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Selecione uma Imagem</h3>
-                                <button type="button" @click="closeGallery()" class="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-gray-800">
-                                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                    </svg>
-                                </button>
+                            <div class="flex items-center justify-between gap-3 border-b border-gray-100 px-4 py-4 sm:px-6 dark:border-gray-800">
+                                <h3 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">Selecione ou envie uma imagem</h3>
+                                <div class="flex items-center gap-2 shrink-0">
+                                    <button type="button"
+                                        @click="openFilePicker()"
+                                        :disabled="isUploading"
+                                        class="inline-flex items-center gap-1.5 rounded-lg bg-brand-500 px-3 py-2 text-xs sm:text-sm font-medium text-white hover:bg-brand-600 disabled:opacity-60 transition-colors">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                        </svg>
+                                        <span x-text="isUploading ? 'Enviando...' : 'Enviar imagem'"></span>
+                                    </button>
+                                    <button type="button" @click="closeGallery(true)" class="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-gray-800">
+                                        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
 
+                            <input type="file" x-ref="fileInput" class="hidden" accept="image/jpeg,image/png,image/jpg,image/gif,image/svg+xml,image/webp" @change="handleFileSelect($event)">
+
                             <!-- Área de Upload Rápido -->
-                            <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
+                            <div class="px-4 py-4 sm:px-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
                                 <div 
-                                    class="relative border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-6 text-center transition-all"
+                                    class="relative border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-4 sm:p-6 text-center transition-all cursor-pointer"
                                     :class="{'border-brand-500 bg-brand-50/50 dark:bg-brand-900/10': isDragging}"
+                                    @click="openFilePicker()"
                                     @dragover.prevent="isDragging = true"
                                     @dragleave.prevent="isDragging = false"
                                     @drop.prevent="isDragging = false; handleDrop($event)"
                                 >
-                                    <input type="file" x-ref="fileInput" class="hidden" accept="image/jpeg,image/png,image/jpg,image/gif,image/svg+xml" @change="handleFileSelect($event)">
-                                    
                                     <div x-show="!isUploading">
                                         <svg class="mx-auto h-8 w-8 text-gray-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                                         </svg>
                                         <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                            Arraste uma imagem aqui ou 
-                                            <button type="button" @click="$refs.fileInput.click()" class="text-brand-500 hover:text-brand-600 font-semibold focus:outline-none">clique para enviar</button>
+                                            Arraste uma imagem aqui ou toque para enviar
                                         </p>
-                                        <p class="text-xs text-gray-500 mt-1">PNG, JPG, SVG ou GIF (Max. 5MB)</p>
+                                        <p class="text-xs text-gray-500 mt-1">PNG, JPG, SVG, WEBP ou GIF (máx. 5MB)</p>
                                     </div>
 
                                     <div x-show="isUploading" style="display: none;" class="flex flex-col items-center">
-                                        <svg class="animate-spin -ml-1 mr-3 h-8 w-8 text-brand-500 mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <svg class="animate-spin h-8 w-8 text-brand-500 mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                         </svg>
@@ -198,10 +209,11 @@
                             </div>
 
                             <!-- Grade de Imagens -->
-                            <div class="flex-1 overflow-y-auto p-6 bg-gray-50/50 dark:bg-black/20 custom-scrollbar">
+                            <div class="flex-1 overflow-y-auto p-4 sm:p-6 bg-gray-50/50 dark:bg-black/20 custom-scrollbar">
                                 <template x-if="images.length === 0 && !isUploading">
                                     <div class="py-12 text-center text-gray-500">
-                                        Não há imagens na galeria. Faça o upload primeiro na aba Galeria.
+                                        <p class="font-medium">Nenhuma imagem na galeria.</p>
+                                        <p class="text-sm mt-1">Use o botão <span class="font-semibold text-brand-500">Enviar imagem</span> acima para adicionar.</p>
                                     </div>
                                 </template>
                                 
@@ -231,7 +243,7 @@
     </div>
 @endsection
 
-@push('scripts')
+@push('alpine')
 <script>
     document.addEventListener('alpine:init', () => {
         Alpine.data('gallerySelector', (initialData) => ({
@@ -239,11 +251,12 @@
             app_logo: initialData.app_logo || '',
             app_favicon: initialData.app_favicon || '',
             auth_banner: initialData.auth_banner || '',
-            
+
             isGalleryOpen: false,
             currentActivatingField: null,
             isDragging: false,
             isUploading: false,
+            isPickingFile: false,
             uploadError: null,
 
             openGallery(field) {
@@ -253,18 +266,44 @@
                 document.body.style.overflow = 'hidden';
             },
 
-            closeGallery() {
+            canCloseGallery() {
+                return !this.isUploading && !this.isPickingFile;
+            },
+
+            closeGallery(force = false) {
+                if (!force && !this.canCloseGallery()) {
+                    return;
+                }
+
                 this.isGalleryOpen = false;
                 this.currentActivatingField = null;
+                this.isPickingFile = false;
                 this.uploadError = null;
                 document.body.style.overflow = '';
+            },
+
+            openFilePicker() {
+                if (this.isUploading) {
+                    return;
+                }
+
+                this.isPickingFile = true;
+                this.uploadError = null;
+                this.$refs.fileInput.click();
+
+                // Se o usuário cancelar o seletor nativo, libera o fechamento do modal
+                setTimeout(() => {
+                    if (!this.isUploading) {
+                        this.isPickingFile = false;
+                    }
+                }, 1000);
             },
 
             selectImage(url) {
                 if (this.currentActivatingField) {
                     this[this.currentActivatingField] = url;
                 }
-                this.closeGallery();
+                this.closeGallery(true);
             },
 
             isActive(url) {
@@ -281,54 +320,66 @@
 
             async handleFileSelect(event) {
                 const files = event.target.files;
+                this.isPickingFile = false;
+
                 if (files.length > 0) {
                     await this.uploadFile(files[0]);
                 }
-                // Reset input
+
                 event.target.value = '';
             },
 
             async uploadFile(file) {
+                if (!file || !file.type.startsWith('image/')) {
+                    this.uploadError = 'Selecione um arquivo de imagem válido.';
+                    return;
+                }
+
+                if (file.size > 5 * 1024 * 1024) {
+                    this.uploadError = 'A imagem deve ter no máximo 5MB.';
+                    return;
+                }
+
+                const targetField = this.currentActivatingField;
                 this.isUploading = true;
                 this.uploadError = null;
 
                 const formData = new FormData();
                 formData.append('image', file);
-                
-                // Pega o token CSRF da meta tag do layout principal
-                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
                 try {
                     const response = await fetch('{{ route('gallery.store') }}', {
                         method: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': csrfToken,
-                            'Accept': 'application/json' // Força retorno JSON em caso de erro de validação
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
                         },
                         body: formData
                     });
 
-                    if (response.ok) {
-                        const data = await response.json();
-                        
-                        // Push new image object to images array
-                        if(data.image) {
-                            // Insert at the beginning of the array so it shows up first
-                            this.images.unshift(data.image);
-                            // Auto-select the newly uploaded image
-                            this.selectImage(data.image.url);
-                        } else {
-                            // Se a resposta não contém uma imagem por algum motivo, recarrega a página de forma contida
-                            window.location.reload(); 
+                    const data = await response.json().catch(() => ({}));
+
+                    if (response.ok && data.image) {
+                        this.images.unshift(data.image);
+
+                        if (targetField) {
+                            this[targetField] = data.image.url;
                         }
-                    } else {
-                        const data = await response.json();
-                        this.uploadError = data.message || 'Erro ao enviar a imagem. Verifique se o formato e tamanho (máx 5MB) são válidos.';
+
+                        this.closeGallery(true);
+                        return;
                     }
+
+                    const validationError = data.errors?.image?.[0];
+                    this.uploadError = validationError || data.message || 'Erro ao enviar a imagem. Verifique o formato e o tamanho (máx. 5MB).';
                 } catch (error) {
                     this.uploadError = 'Erro na conexão. Tente novamente.';
                 } finally {
                     this.isUploading = false;
+                    this.isPickingFile = false;
                 }
             }
         }));

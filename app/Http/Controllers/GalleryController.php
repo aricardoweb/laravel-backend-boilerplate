@@ -39,17 +39,17 @@ class GalleryController extends Controller
                 'url' => Storage::url($path),
             ]);
 
-            if ($request->wantsJson()) {
+            if ($request->expectsJson() || $request->ajax()) {
                 return response()->json([
                     'message' => 'Imagem enviada com sucesso.',
-                    'image' => $image
+                    'image' => $image,
                 ], 201);
             }
 
             return redirect()->route('gallery.index')->with('success', 'Imagem enviada com sucesso para a galeria.');
         }
 
-        if ($request->wantsJson()) {
+        if ($request->expectsJson() || $request->ajax()) {
             return response()->json(['message' => 'Ocorreu um erro ao enviar a imagem.'], 400);
         }
 
