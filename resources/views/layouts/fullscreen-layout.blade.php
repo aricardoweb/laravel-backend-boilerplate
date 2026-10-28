@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     @php
-        $appName = app_setting('app_name', 'MedCare Backend');
+        $appName = app_setting('app_name', 'Adminpanel Backend');
         $favicon = app_setting('app_favicon', null);
     @endphp
 

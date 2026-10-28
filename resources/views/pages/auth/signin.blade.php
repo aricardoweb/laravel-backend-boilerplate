@@ -18,7 +18,7 @@
                     <div>
                         <div class="mb-5 sm:mb-8 text-center sm:text-left">
                             <h1 class="text-title-sm sm:text-title-md mb-2 font-semibold text-gray-800 dark:text-white/90">
-                                Entrar em {{ app_setting('app_name', 'MedCare') }}
+                                Entrar em {{ app_setting('app_name', 'Adminpanel') }}
                             </h1>
                             <p class="text-sm text-gray-500 dark:text-gray-400">
                                 Digite seu e-mail e senha para acessar!
@@ -168,7 +168,7 @@
                             @endif
                         </a>
                         <p class="text-white/90 font-medium">
-                            Acesse a plataforma para gerenciar {{ app_setting('app_name', 'MedCare') }}
+                            Acesse a plataforma para gerenciar {{ app_setting('app_name', 'adminpanel') }}
                         </p>
                     </div>
                 </div>

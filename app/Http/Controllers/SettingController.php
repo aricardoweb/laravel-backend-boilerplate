@@ -29,7 +29,7 @@ class SettingController extends Controller
     public function update(Request $request)
     {
         // Espera-se que o array settings venha no formato:
-        // settings[app_name] = 'MedCare'
+        // settings[app_name] = 'adminpanel'
         // settings[app_logo] = 'URL da imagem' (selecionada da galeria)
         // ...
         

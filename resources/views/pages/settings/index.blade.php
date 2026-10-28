@@ -38,7 +38,7 @@
                         Nome da Plataforma
                     </label>
                     <input type="text" id="app_name" name="settings[app_name]" 
-                        value="{{ old('settings.app_name', $settings['app_name'] ?? 'MedCare Backend') }}"
+                        value="{{ old('settings.app_name', $settings['app_name'] ?? 'Adminpanel Backend') }}"
                         class="block w-full rounded-lg border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
                         placeholder="Ex: Minha Empresa">
                 </div>

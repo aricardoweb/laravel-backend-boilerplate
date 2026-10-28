@@ -4,7 +4,7 @@
     <div class="flex flex-col items-center justify-center py-10">
         <div class="w-full max-w-2xl rounded-2xl bg-white p-8 shadow-sm dark:bg-gray-800">
             <h1 class="mb-4 text-3xl font-bold text-gray-800 dark:text-white">
-                Bem-vindo ao MedCare!
+                Bem-vindo ao Adminpanel!
             </h1>
             <p class="text-lg text-gray-600 dark:text-gray-400">
                 Olá, <span class="font-semibold text-brand-500">{{ Auth::user()->name }}</span>! Sua conta está ativa e você já pode começar a utilizar a plataforma.
