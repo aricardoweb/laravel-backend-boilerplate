@@ -1,4 +1,18 @@
 @props(['items' => ['View More','Delete']])
+@php
+    $actionIcons = [
+        'view more' => 'view',
+        'ver mais' => 'view',
+        'visualizar' => 'view',
+        'edit' => 'edit',
+        'editar' => 'edit',
+        'delete' => 'delete',
+        'excluir' => 'delete',
+        'remover' => 'delete',
+        'copy' => 'copy',
+        'copiar' => 'copy',
+    ];
+@endphp
 <div x-data="{openDropDown: false}" class="relative h-fit">
     <button
         @click="openDropDown = !openDropDown"
@@ -10,9 +24,16 @@
     </button>
     
     <div x-show="openDropDown" @click.outside="openDropDown = false" 
-         class="absolute right-0 z-40 w-40 p-2 space-y-1 bg-white border border-gray-200 shadow-theme-lg dark:bg-gray-dark top-full rounded-2xl dark:border-gray-800">
+         class="absolute right-0 z-40 w-44 p-2 space-y-1 bg-white border border-gray-200 shadow-theme-lg dark:bg-gray-dark top-full rounded-2xl dark:border-gray-800">
         @forelse($items as $item)
-            <button class="flex w-full px-3 py-2 font-medium text-left text-gray-500 rounded-lg text-theme-xs hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300">
+            @php
+                $icon = $actionIcons[strtolower($item)] ?? null;
+                $isDanger = $icon === 'delete';
+            @endphp
+            <button class="flex w-full items-center gap-2 px-3 py-2 font-medium text-left text-gray-500 rounded-lg text-theme-xs hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5 {{ $isDanger ? 'hover:text-error-500 dark:hover:text-error-400' : 'hover:text-gray-700 dark:hover:text-gray-300' }}">
+                @if ($icon)
+                    <x-ui.action-icon :name="$icon" />
+                @endif
                 {{ $item }}
             </button>
         @empty

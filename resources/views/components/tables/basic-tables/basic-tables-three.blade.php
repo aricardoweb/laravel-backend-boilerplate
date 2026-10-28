@@ -261,10 +261,12 @@
                                             </x-slot>
         
                                             <x-slot name="content">
-                                                <a href="#" class="flex w-full px-3 py-2 font-medium text-left text-gray-500 rounded-lg text-theme-xs hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300" role="menuitem">
+                                                <a href="#" class="flex w-full items-center gap-2 px-3 py-2 font-medium text-left text-gray-500 rounded-lg text-theme-xs hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300" role="menuitem">
+                                                    <x-ui.action-icon name="view" />
                                                     View More
                                                 </a>
-                                                <a href="#" class="flex w-full px-3 py-2 font-medium text-left text-gray-500 rounded-lg text-theme-xs hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300" role="menuitem">
+                                                <a href="#" class="flex w-full items-center gap-2 px-3 py-2 font-medium text-left text-gray-500 rounded-lg text-theme-xs hover:bg-gray-100 hover:text-error-500 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-error-400" role="menuitem">
+                                                    <x-ui.action-icon name="delete" />
                                                     Delete
                                                 </a>
                                             </x-slot>
