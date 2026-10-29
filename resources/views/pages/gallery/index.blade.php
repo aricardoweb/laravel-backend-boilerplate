@@ -40,28 +40,38 @@
 
     <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:gap-6">
         @forelse ($images as $image)
-            <div class="group relative aspect-square overflow-hidden rounded-xl border border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900 flex items-center justify-center">
-                <img src="{{ $image->url }}" alt="{{ $image->filename }}" class="object-cover w-full h-full" loading="lazy">
-                
-                <!-- Overlay de Hover -->
-                <div class="absolute inset-0 bg-gray-900/60 opacity-0 transition-opacity flex items-center justify-center gap-3 group-hover:opacity-100">
-                    <form action="{{ route('gallery.destroy', $image) }}" method="POST" onsubmit="return confirm('Deseja realmente excluir esta imagem da galeria? Isso pode quebrar referências onde ela está em uso.');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="p-2 text-white bg-error-500 rounded-full hover:bg-error-600 transition-colors" title="Excluir Imagem">
+            <div class="group overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+                <div class="relative flex aspect-square items-center justify-center overflow-hidden bg-gray-50 dark:bg-gray-900">
+                    <img src="{{ $image->url }}" alt="{{ $image->filename }}" class="h-full w-full object-cover" loading="lazy">
+
+                    <div class="absolute inset-0 flex items-center justify-center gap-3 bg-gray-900/60 opacity-0 transition-opacity group-hover:opacity-100">
+                        <form action="{{ route('gallery.destroy', $image) }}" method="POST" onsubmit="return confirm('Deseja realmente excluir esta imagem da galeria? Isso pode quebrar referências onde ela está em uso.');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="rounded-full bg-error-500 p-2 text-white transition-colors hover:bg-error-600" title="Excluir Imagem">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M19 7L18.1327 19.1425C18.0579 20.1891 17.187 21 16.1378 21H7.86224C6.81296 21 5.94208 20.1891 5.86732 19.1425L5 7M10 11V17M14 11V17M15 7V4C15 3.44772 14.5523 3 14 3H10C9.44772 3 9 3.44772 9 4V7M4 7H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                        </form>
+
+                        <button type="button" onclick="navigator.clipboard.writeText('{{ $image->url }}'); alert('URL copiada: {{ $image->url }}');" class="rounded-full bg-gray-700 p-2 text-white transition-colors hover:bg-gray-600" title="Copiar URL">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M19 7L18.1327 19.1425C18.0579 20.1891 17.187 21 16.1378 21H7.86224C6.81296 21 5.94208 20.1891 5.86732 19.1425L5 7M10 11V17M14 11V17M15 7V4C15 3.44772 14.5523 3 14 3H10C9.44772 3 9 3.44772 9 4V7M4 7H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M8 5H6C4.89543 5 4 5.89543 4 7V19C4 20.1046 4.89543 21 6 21H16C17.1046 21 18 20.1046 18 19V17M8 5C8 6.10457 8.89543 7 10 7H12C13.1046 7 14 6.10457 14 5M8 5C8 3.89543 8.89543 3 10 3H12C13.1046 3 14 3.89543 14 5M14 5H16C17.1046 5 18 5.89543 18 7V11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <rect x="14" y="11" width="8" height="6" rx="1" stroke="currentColor" stroke-width="2"/>
+                                <path d="M16 14H20M16 20H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                             </svg>
                         </button>
-                    </form>
-                    
-                    <button type="button" onclick="navigator.clipboard.writeText('{{ $image->url }}'); alert('URL copiada: {{ $image->url }}');" class="p-2 text-white bg-gray-700 rounded-full hover:bg-gray-600 transition-colors" title="Copiar URL">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M8 5H6C4.89543 5 4 5.89543 4 7V19C4 20.1046 4.89543 21 6 21H16C17.1046 21 18 20.1046 18 19V17M8 5C8 6.10457 8.89543 7 10 7H12C13.1046 7 14 6.10457 14 5M8 5C8 3.89543 8.89543 3 10 3H12C13.1046 3 14 3.89543 14 5M14 5H16C17.1046 5 18 5.89543 18 7V11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <rect x="14" y="11" width="8" height="6" rx="1" stroke="currentColor" stroke-width="2"/>
-                            <path d="M16 14H20M16 20H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
-                    </button>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-100 px-2.5 py-2 dark:border-gray-800">
+                    <p class="text-xs font-medium text-gray-700 dark:text-gray-300">{{ $image->formattedFileSize() }}</p>
+                    @if ($image->created_at)
+                        <p class="mt-0.5 text-[11px] leading-4 text-gray-500 dark:text-gray-400" title="Adicionado em {{ $image->created_at->format('d/m/Y') }} às {{ $image->created_at->format('H:i') }}">
+                            {{ $image->created_at->format('d/m/Y H:i') }}
+                        </p>
+                    @endif
                 </div>
             </div>
         @empty
